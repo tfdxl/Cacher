@@ -29,7 +29,7 @@ public class CacheKeyHolder {
     // ****************** //
     private Map<Integer, CacheKey> cacheKeyMap;
 
-    private int multiIndex = -1;
+    private int multiIndex;
 
     private String id;
 
