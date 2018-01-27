@@ -210,15 +210,14 @@ public class RedisClusterCache implements ICache {
 
     private void multiThreadsDel(String... keys) {
         final CountDownLatch latch = new CountDownLatch(keys.length);
+
         for (final String key : keys) {
-            executor.execute(new Runnable() {
-                @Override
-                public void run() {
-                    jedisCluster.del(key);
-                    latch.countDown();
-                }
+            executor.execute(() -> {
+                jedisCluster.del(key);
+                latch.countDown();
             });
         }
+
         try {
             latch.await();
         } catch (InterruptedException e) {
