@@ -1,13 +1,15 @@
 package com.alibaba.cacher.support.cache;
 
-import com.alibaba.cacher.IObjectSerializer;
-import com.google.common.base.Splitter;
 import com.alibaba.cacher.ICache;
+import com.alibaba.cacher.IObjectSerializer;
 import com.alibaba.cacher.enums.Expire;
 import com.alibaba.cacher.utils.SerializeUtils;
+import com.google.common.base.Splitter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import redis.clients.jedis.*;
+import redis.clients.jedis.HostAndPort;
+import redis.clients.jedis.JedisCluster;
+import redis.clients.jedis.JedisPoolConfig;
 
 import javax.annotation.PreDestroy;
 import java.io.IOException;
@@ -105,13 +107,7 @@ public class RedisClusterCache implements ICache {
         List<Future<Object>> futures = new ArrayList<>(keys.size());
         for (final String key : keys) {
             futures.add(
-                    executor.submit(new Callable<Object>() {
-
-                        @Override
-                        public Object call() throws Exception {
-                            return read(key);
-                        }
-                    })
+                    executor.submit(() -> read(key))
             );
         }
 
