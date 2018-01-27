@@ -167,13 +167,10 @@ public class RedisClusterCache implements ICache {
     private void multiThreadsMSet(Map<String, Object> keyValueMap, final long expire) {
         final CountDownLatch latch = new CountDownLatch(keyValueMap.size());
         for (final Map.Entry<String, Object> entry : keyValueMap.entrySet()) {
-            executor.execute(new Runnable() {
-                @Override
-                public void run() {
-                    write(entry.getKey(), entry.getValue(), expire);
+            executor.execute(() -> {
+                write(entry.getKey(), entry.getValue(), expire);
 
-                    latch.countDown();
-                }
+                latch.countDown();
             });
         }
         try {
